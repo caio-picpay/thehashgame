@@ -1,5 +1,6 @@
 package thg.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import thg.domain.exceptions.*;
 
@@ -15,7 +16,6 @@ import static thg.domain.config.Config.WIN_POSITIONS;
 
 /**
  * The Hash Game
- *
  * Positions:
  * 0 | 1 | 2
  * ---------
@@ -29,6 +29,13 @@ public class Board {
     private final String id;
     private final Mark turn;
     private final Map<Integer, Mark> marks;
+
+    // required by ObjectMapper
+    public Board() {
+        this.id = null;
+        this.turn = null;
+        this.marks = null;
+    }
 
     public Board(final Map<Integer, Mark> marks, final Mark turn) {
         this.id = UUID.randomUUID().toString();
@@ -49,16 +56,18 @@ public class Board {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    private boolean isWinner(final Mark mark) {
+        return WIN_POSITIONS.stream().anyMatch(positions -> positions.stream().allMatch(position -> marks.get(position) == mark));
+    }
+
+    @JsonIgnore
     public boolean isCircleWinner() {
         return isWinner(Mark.CIRCLE);
     }
 
+    @JsonIgnore
     public boolean isSquareWinner() {
         return isWinner(Mark.SQUARE);
-    }
-
-    private boolean isWinner(final Mark mark) {
-        return WIN_POSITIONS.stream().anyMatch(positions -> positions.stream().allMatch(position -> marks.get(position) == mark));
     }
 
     public boolean gameIsOver() {

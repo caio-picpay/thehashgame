@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import thg.application.ports.BoardCreatorPort;
 import thg.domain.entities.Board;
 import thg.domain.entities.Mark;
+import thg.spring.config.EnvConfig;
 import thg.spring.exceptions.CantSaveBoardException;
 import thg.spring.tools.FileTools;
 
@@ -14,8 +15,7 @@ import thg.spring.tools.FileTools;
 public class BoardCreatorFileAdapter implements BoardCreatorPort {
 
     final FileTools fileTools;
-
-    final String BOARDS_JSON = ".db/boards.json";
+    final EnvConfig config;
 
     @Override
     public Board createBoard(Mark firstToPlay) {
@@ -25,12 +25,13 @@ public class BoardCreatorFileAdapter implements BoardCreatorPort {
     }
 
     private void writeBoardToFile(final Board board) {
+        final String filePath = config.getBoardFilePath();
         try {
-            fileTools.createIfDoesNotExist(BOARDS_JSON);
-            String fileContent = fileTools.read(BOARDS_JSON);
+            fileTools.createIfDoesNotExist(filePath);
+            String fileContent = fileTools.read(filePath);
             String newRow = new ObjectMapper().writeValueAsString(board);
             String fileContentWithNewRow = newRow + "\n" + fileContent;
-            fileTools.write(BOARDS_JSON, fileContentWithNewRow);
+            fileTools.write(filePath, fileContentWithNewRow);
         } catch (Exception e) {
             e.printStackTrace();
             throw new CantSaveBoardException();
