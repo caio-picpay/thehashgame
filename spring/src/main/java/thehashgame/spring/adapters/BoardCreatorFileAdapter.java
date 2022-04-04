@@ -1,11 +1,11 @@
-package thehashgame.spring.adapters;
+package domain.spring.adapters;
 
 import app.ports.BoardCreatorPort;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
-import thehashgame.entities.Board;
-import thehashgame.entities.Mark;
-import thehashgame.spring.exceptions.CantSaveBoardException;
+import domain.entities.Board;
+import domain.entities.Mark;
+import domain.spring.exceptions.CantSaveBoardException;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

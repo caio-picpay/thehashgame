@@ -1,4 +1,4 @@
-package thehashgame.spring.exceptions;
+package domain.spring.exceptions;
 
 public class CantSaveBoardException extends RuntimeException{
 }

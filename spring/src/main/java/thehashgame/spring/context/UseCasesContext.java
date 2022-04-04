@@ -1,9 +1,9 @@
-package thehashgame.spring.context;
+package domain.spring.context;
 
 import app.usecases.createboard.CreateBoardUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import thehashgame.spring.adapters.BoardCreatorFileAdapter;
+import domain.spring.adapters.BoardCreatorFileAdapter;
 
 @Configuration
 public class UseCasesContext {

@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-  implementation(project(":thehashgame"))
-  implementation(project(":app"))
+  implementation(project(":domain"))
+  implementation(project(":application"))
 
   compileOnly("org.projectlombok:lombok:1.18.22")
   annotationProcessor ("org.projectlombok:lombok:1.18.22")
