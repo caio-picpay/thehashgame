@@ -2,5 +2,5 @@
 .idea
 .gradle
 build
-boards.json
 .vscode
+.db/*.json
