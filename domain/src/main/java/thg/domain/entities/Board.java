@@ -76,7 +76,8 @@ public class Board {
         return isWinner(Mark.SQUARE);
     }
 
-    public boolean gameIsOver() {
+    @JsonIgnore
+    public boolean isGameOver() {
         if (isCircleWinner() || isSquareWinner()) return true;
         return VALID_POSITIONS.stream().allMatch(p -> marks.get(p) != null);
     }
@@ -84,7 +85,7 @@ public class Board {
     public Board put(final Mark mark, int position) {
         if (isNull(mark) || !List.of(Mark.SQUARE, Mark.CIRCLE).contains(mark)) throw new InvalidMarkException();
         if (!VALID_POSITIONS.contains(position)) throw new InvalidPositionException();
-        if (gameIsOver()) throw new TheGameIsAlreadyOverException();
+        if (isGameOver()) throw new TheGameIsAlreadyOverException();
         if (marks.get(position) != null) throw new PositionAlreadyMarkedException();
         if (mark != turn && mark == Mark.CIRCLE) throw new NotTurnOfCirclesException();
         if (mark != turn && mark == Mark.SQUARE) throw new NotTurnOfSquaresException();

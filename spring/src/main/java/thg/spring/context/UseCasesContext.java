@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import thg.application.usecases.checkboard.CheckBoardUseCase;
 import thg.application.usecases.createboard.CreateBoardUseCase;
+import thg.application.usecases.findboards.FindBoardsUseCase;
 import thg.application.usecases.playmark.PlayMarkUseCase;
 import thg.spring.adapters.BoardCreatorFileAdapter;
 import thg.spring.adapters.BoardFinderFileAdapter;
@@ -31,5 +32,10 @@ public class UseCasesContext {
                 boardFinderFileAdapter,
                 boardSaverFileAdapter
         );
+    }
+
+    @Bean
+    public FindBoardsUseCase findBoardsUseCase(final BoardFinderFileAdapter boardFinderFileAdapter){
+        return new FindBoardsUseCase(boardFinderFileAdapter);
     }
 }

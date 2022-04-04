@@ -17,7 +17,7 @@ public class CheckBoardUseCase implements UseCase<CheckBoardInput, CheckBoardOut
                 .board(board)
                 .circleWins(board.isCircleWinner())
                 .squareWins(board.isSquareWinner())
-                .gameOver(board.gameIsOver())
+                .gameOver(board.isGameOver())
                 .build();
     }
 }
