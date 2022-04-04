@@ -25,11 +25,11 @@ public class BoardFinderFileAdapter implements BoardFinderPort {
 
     @Override
     public Optional<Board> findBoard(String boardId) {
-        List<Board> boards = findAll();
         return findAll().stream().filter(it -> it.getId().equals(boardId)).findFirst();
     }
 
-    private List<Board> findAll() {
+    @Override
+    public List<Board> findAll() {
         final String filePath = config.getBoardFilePath();
         try {
             fileTools.createIfDoesNotExist(filePath);

@@ -43,6 +43,12 @@ public class Board {
         this.turn = turn;
     }
 
+    public Board(final String id, final Map<Integer, Mark> marks, final Mark turn) {
+        this.id = id;
+        this.marks = marks;
+        this.turn = turn;
+    }
+
     public Board(Mark firstTurn) {
         this.id = UUID.randomUUID().toString();
         marks = new HashMap<>();
@@ -85,6 +91,6 @@ public class Board {
         final HashMap<Integer, Mark> nextMarks = getMarks();
         nextMarks.put(position, mark);
         final Mark nextTurn = mark == Mark.CIRCLE ? Mark.SQUARE : Mark.CIRCLE;
-        return new Board(nextMarks, nextTurn);
+        return new Board(id, nextMarks, nextTurn);
     }
 }
