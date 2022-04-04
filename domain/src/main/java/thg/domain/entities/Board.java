@@ -37,12 +37,6 @@ public class Board {
         this.marks = null;
     }
 
-    public Board(final Map<Integer, Mark> marks, final Mark turn) {
-        this.id = UUID.randomUUID().toString();
-        this.marks = marks;
-        this.turn = turn;
-    }
-
     public Board(final String id, final Map<Integer, Mark> marks, final Mark turn) {
         this.id = id;
         this.marks = marks;
