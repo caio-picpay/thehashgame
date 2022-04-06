@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 @AllArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BoardController {
 
     private final CreateBoardUseCase createBoardUseCase;

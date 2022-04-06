@@ -1,0 +1,271 @@
+<html>
+
+<head>
+    <title>thehashgame</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
+        integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: 200px 200px 200px;
+            grid-gap: 4px;
+        }
+
+        .gap {
+            background-color: #ddd;
+            padding: 20px;
+            font-size: 150%;
+        }
+
+        .circle,
+        .square {
+            font-size: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <h1>
+            Burguer ou Fritas?
+        </h1>
+        <div>
+            <button onclick="createBoard()">Novo Jogo</button>
+        </div>
+    </section>
+    <section>
+        <h1>Jogo <small id="board-id"></small></h1>
+        <div>
+            <div id="board" class="board">
+                <div class="gap" id="gap-0">
+                    <button onclick="playMark(0,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(0,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-0" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-0" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(1,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(1,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-1" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-1" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(2,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(2,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-2" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-2" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(3,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(3,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-3" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-3" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(4,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(4,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-4" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-4" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(5,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(5,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-5" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-5" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(6,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(6,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-6" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-6" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(7,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(7,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-7" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-7" style="display:none">🍟</span>
+                </div>
+                <div class="gap">
+                    <button onclick="playMark(8,'CIRCLE')">🍔</button>
+                    <button onclick="playMark(8,'SQUARE')">🍟</button>
+                    <span class="circle" id="CIRCLE-8" style="display:none">🍔</span>
+                    <span class="square" id="SQUARE-8" style="display:none">🍟</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Status</h2>
+            <div id="game-results">
+
+            </div>
+        </div>
+    </section>
+    <section>
+        <h1>
+            Boards
+        </h1>
+        <div>
+            <ul id="board-list">
+                <li>Board 1</li>
+                <li>Board 2</li>
+                <li>Board n</li>
+            </ul>
+        </div>
+    </section>
+
+    <script>
+        const BASE_URL = "http://localhost:8090"
+        const CIRCLE = "CIRCLE"
+        const CREATE_BOARD_URL = `${BASE_URL}/board`
+        const MARK_URL = `${BASE_URL}/board/mark`
+        const CHECK_BOARD_URL = `${BASE_URL}/board/{boardId}`
+        const FIND_BOARDS_URL = `${BASE_URL}/board`
+
+        let state = {
+            board: undefined,
+            boards: []
+        }
+
+        const setState = (newState) => {
+            state = newState;
+            console.log('new state:', newState)
+            renderBoard();
+            renderBoardList();
+            renderCheckArea()
+        }
+
+        const renderCheckArea = () => {
+            if (state.circleWins || state.squareWins || state.gameOver) {
+                const html = `
+                    Hambúrguer Ganhou ${state.circleWins ? "SIM" : "NÃO"}
+                    <br >
+                    Fritas Ganhou ${state.squareWins ? "SIM" : "NÃO"}
+                    <br/>
+                    Fim de Jogo ${state.gameOver ? "SIM" : "NÃO"}
+                `
+                document.getElementById("game-results").innerHTML = html;
+            } else if(state.gameOver === undefined) {
+                document.getElementById("game-results").innerHTML = ``;
+            } else {
+                document.getElementById("game-results").innerHTML = `Jogo em andamento`;
+            }
+        }
+
+        const setCurrentBoard = (boardId) => {
+            console.log(boardId)
+            setState({ ...state, board: state.boards.filter(it => it.id === boardId)[0] })
+            checkBoard(boardId)
+        }
+
+        const renderBoardList = () => {
+            const boardListEl = document.getElementById("board-list");
+            boardListEl.innerHTML = "";
+            let i = state.boards.length
+            let listItems = ''
+            while (--i > -1) {
+                const board = state.boards[i];
+                listItems += `
+                    <li><button onclick="setCurrentBoard('${board.id}')">${board.id}</button></li>
+                `
+            }
+            boardListEl.innerHTML = listItems
+        }
+
+        const showBoard = function (board) {
+            document.getElementById("board").style.display = 'grid';
+            document.getElementById("board-id").innerHTML = board.id;
+            let i = -1;
+            while (++i < 9) {
+                document.getElementById(`CIRCLE-${i}`).style.display = 'none';
+                document.getElementById(`SQUARE-${i}`).style.display = 'none';
+            }
+            for (const [key, value] of Object.entries(board.marks)) {
+                document.getElementById(`${value}-${key}`).style.display = 'block';
+            }
+        };
+
+        const hideBoard = function (elem) {
+            document.getElementById("board").style.display = 'none';
+        };
+
+        const renderBoard = () => {
+            if (state.board) {
+                showBoard(state.board)
+            } else {
+                hideBoard()
+            }
+        }
+
+        const createBoard = () => {
+            axios.post(CREATE_BOARD_URL, {
+                firstToPlay: CIRCLE
+            })
+                .then(function (response) {
+                    const board = response.data
+                    console.log(board);
+                    setState({ ...state, board })
+                    findBoards()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        const playMark = (position, mark) => {
+            const boardId = state.board.id
+            axios.post(MARK_URL, {
+                boardId,
+                position,
+                mark
+            })
+                .then(function (response) {
+                    console.log(response);
+                    return checkBoard(boardId)
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert(error.response.data.message)
+                });
+        }
+
+        const findBoards = () => {
+            axios.get(FIND_BOARDS_URL)
+                .then(function (response) {
+                    console.log(response);
+                    setState({ ...state, boards: response.data })
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        const checkBoard = (boardId) => {
+            axios.get(CHECK_BOARD_URL.replace("{boardId}", boardId))
+                .then(function (response) {
+                    const boardInfo = response.data
+                    console.log(boardInfo);
+                    setState({
+                        ...state,
+                        board: boardInfo.board,
+                        circleWins: boardInfo.circleWins,
+                        gameOver: boardInfo.gameOver,
+                        squareWins: boardInfo.squareWins
+                    })
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        const main = () => {
+            findBoards()
+            renderBoard()
+        }
+
+        main()
+    </script>
+</body>
+
+</html>
